@@ -579,7 +579,16 @@ form.addEventListener("submit", async (event) => {
 
   form.querySelectorAll("input, textarea").forEach(validateText);
 
-  if (!form.reportValidity() || !validateMedia()) {
+  if (!form.reportValidity()) {
+    message(
+      "#export-status",
+      "Complete all required fields before downloading your PDF.",
+      true
+    );
+    return;
+  }
+
+  if (!validateMedia()) {
     return;
   }
 
