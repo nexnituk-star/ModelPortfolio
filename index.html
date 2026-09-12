@@ -347,7 +347,7 @@
 
           <p class="hint" id="media-limits">
             Up to 50 photos across both photo fields.
-            All photos and the video together: 50 MB maximum.
+            Photos are limited to 50 MB total.
             Select files again to add more photos.
           </p>
 
@@ -365,17 +365,17 @@
 
           <div class="upload-box">
             <label for="room-video">
-              21. Room and lighting video <small>required</small>
+              21. Google Drive video link <small>required</small>
             </label>
             <p class="hint" id="video-hint">
-              Add one video showing your room, windows, lights, and shoot area.
-              MP4, WebM, or MOV. Selecting another video replaces the current one.
+              Upload a video showing your room, windows, lights, and shoot area
+              to Google Drive. Set access to anyone with the link and add
+              nexnituk@gmail.com as a viewer.
             </p>
-            <input id="room-video" type="file"
-                   accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
-                   aria-describedby="video-hint media-limits upload-error"
-                   data-upload="video">
-            <div id="video-preview" class="previews"></div>
+                 <input id="room-video" name="videoLink" type="url"
+                   placeholder="https://drive.google.com/file/d/..."
+                   maxlength="1000" required
+                   aria-describedby="video-hint media-limits upload-error">
           </div>
 
           <div class="upload-box">
@@ -426,8 +426,8 @@
       <footer class="form-footer">
         <h2>Ready for your close-up?</h2>
         <p>
-          Your PDF includes your answers, photo thumbnails, and video filename.
-          Share the original video separately.
+          Your PDF includes your answers, five photo previews per page, and the
+          Google Drive video link.
         </p>
         <button id="download" type="submit" disabled>
           Generate &amp; Download Profile as PDF

@@ -383,14 +383,6 @@ input[type="file"]::file-selector-button {
   font-size: 11px;
 }
 
-.video-file { grid-column: 1 / -1; }
-
-.video-file p {
-  margin: 3px 0;
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .acknowledgement { margin: 24px 0; }
 
 .acknowledgement label {
@@ -544,23 +536,28 @@ input:disabled {
   margin: 0;
 }
 
-.pdf-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+.pdf-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
   padding-bottom: 16px;
 }
 
 .pdf-photo {
-  width: 230px;
+  min-width: 0;
   margin: 0;
   padding: 10px;
   border: 1px solid #dce2db;
+  background: #fff;
 }
 
 .pdf-photo img {
   display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
   margin: 0 auto 8px;
+  background: #f4f6f2;
 }
 
 .pdf-photo figcaption {

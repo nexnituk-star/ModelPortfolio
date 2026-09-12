@@ -5,7 +5,6 @@ const form = $("#application");
 const downloadButton = $("#download");
 
 const media = {
-  video: [],
   room: [],
   body: []
 };
@@ -15,7 +14,7 @@ const MAX_BYTES = 50 * 1000 * 1000;
 
 let busy = false;
 
-const allMedia = () => Object.values(media).flat();
+const allMedia = () => [...media.room, ...media.body];
 const sizeMB = (bytes) => (bytes / 1000000).toFixed(2);
 const fileKey = (file) => `${file.name}|${file.size}|${file.lastModified}`;
 
@@ -209,7 +208,7 @@ function renderMedia() {
     for (const item of items) {
       const card = element(
         "figure",
-        `preview${group === "video" ? " video-file" : ""}`
+        "preview"
       );
 
       if (item.thumb) {
@@ -218,8 +217,6 @@ function renderMedia() {
         image.alt = `${group === "room" ? "Room" : "Full-body"} photo: ${item.file.name}`;
 
         card.append(image);
-      } else {
-        card.append(element("p", "", "Room video selected"));
       }
 
       card.append(
@@ -274,7 +271,7 @@ document.querySelectorAll("[data-upload]").forEach((input) => {
     message("#upload-status", "");
 
     try {
-      const existing = group === "video" ? [...media.room, ...media.body] : allMedia();
+      const existing = allMedia();
       const seen = new Set(existing.map((entry) => fileKey(entry.file)));
 
       const incoming = selected.filter((file) => {
@@ -289,33 +286,20 @@ document.querySelectorAll("[data-upload]").forEach((input) => {
         return;
       }
 
-      if (group === "video" && incoming.length > 1) {
-        throw new Error("Select one room video.");
-      }
-
       for (const file of incoming) {
         if (!file.size) {
           throw new Error(`“${file.name}” is empty.`);
         }
 
-        const valid =
-          group === "video"
-            ? /\.(mp4|webm|mov)$/i.test(file.name) &&
-              (!file.type || /^(video\/(mp4|webm|quicktime))$/i.test(file.type))
-            : /\.(jpe?g|png)$/i.test(file.name) &&
-              (!file.type || /^(image\/(jpeg|png))$/i.test(file.type));
+        const valid = /\.(jpe?g|png)$/i.test(file.name) &&
+          (!file.type || /^(image\/(jpeg|png))$/i.test(file.type));
 
         if (!valid) {
-          throw new Error(
-            group === "video"
-              ? "Choose an MP4, WebM, or MOV video."
-              : "Photos must be JPEG or PNG files."
-          );
+          throw new Error("Photos must be JPEG or PNG files.");
         }
       }
 
-      const photos =
-        media.room.length + media.body.length + (group === "video" ? 0 : incoming.length);
+      const photos = media.room.length + media.body.length + incoming.length;
 
       const bytes = [...existing.map((entry) => entry.file), ...incoming].reduce(
         (sum, file) => sum + file.size,
@@ -339,12 +323,10 @@ document.querySelectorAll("[data-upload]").forEach((input) => {
 
       const accepted = [];
       for (const file of incoming) {
-        accepted.push(
-          group === "video" ? { file } : await makeThumbnail(file)
-        );
+        accepted.push(await makeThumbnail(file));
       }
 
-      media[group] = group === "video" ? accepted : [...media[group], ...accepted];
+      media[group] = [...media[group], ...accepted];
       renderMedia();
 
       const skipped = selected.length - incoming.length;
@@ -369,8 +351,8 @@ function validateMedia() {
   let error = "";
   let target = "#room-video";
 
-  if (!media.video.length) {
-    error = "Add a room and lighting video.";
+  if (!$("#room-video").value.trim()) {
+    error = "Add the Google Drive link for your room and lighting video.";
   } else if (!media.room.length) {
     error = "Add room photos showing the lighting.";
     target = "#room-photos";
@@ -506,17 +488,17 @@ function buildPdfPages(stage) {
   function addGallery(title, items) {
     addAnswer(title, `${items.length} photo(s)`);
 
-    for (let i = 0; i < items.length; i += 3) {
-      const row = element("div", "pdf-row");
+    for (let i = 0; i < items.length; i += 5) {
+      const row = element("div", "pdf-gallery");
 
-      for (const item of items.slice(i, i + 3)) {
+      for (const item of items.slice(i, i + 5)) {
         const figure = element("figure", "pdf-photo");
         const image = element("img");
 
         image.src = item.thumb;
         image.alt = item.file.name;
 
-        const ratio = Math.min(208 / item.width, 180 / item.height);
+        const ratio = Math.min(208 / item.width, 150 / item.height);
         image.width = Math.max(1, Math.round(item.width * ratio));
         image.height = Math.max(1, Math.round(item.height * ratio));
 
@@ -564,10 +546,8 @@ function buildPdfPages(stage) {
     if (section.id === "media") {
       addAnswer(
         "21. Room and lighting video",
-        media.video
-          .map(({ file }) => `${file.name} (${sizeMB(file.size)} MB)`)
-          .join("\n") +
-          "\nVideo content is not embedded. Share the original video separately."
+        $("#room-video").value.trim() +
+          "\nAccess requested for nexnituk@gmail.com."
       );
 
       addAnswer("Combined media", $("#media-summary").textContent);
