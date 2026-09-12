@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Build your remote modeling profile and download your application as a PDF.">
+  <title>FRAME | Remote Modeling Application</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#application">Skip to application</a>
+
+  <header class="site-header">
+    <a class="brand" href="#">FRAME<span> / TALENT</span></a>
+    <span class="badge">Remote modeling</span>
+  </header>
+
+  <main class="layout">
+    <aside class="intro">
+      <p class="eyebrow">Your next chapter</p>
+      <h1>Great talent.<br>Anywhere.</h1>
+      <p>Bring your perspective to the frame. Tell us about yourself, your setup, and the work you want to do.</p>
+
+      <nav aria-label="Application sections">
+        <a href="#personal"><span>01</span> Personal information</a>
+        <a href="#experience"><span>02</span> Modeling experience</a>
+        <a href="#technical"><span>03</span> Technical setup</a>
+        <a href="#availability"><span>04</span> Availability</a>
+        <a href="#professional"><span>05</span> Professional details</a>
+        <a href="#media"><span>06</span> Media verification</a>
+      </nav>
+
+      <div class="intro-note">
+        Your profile, ready to share.<br>
+        <small>Download a PDF after completing all six sections.</small>
+      </div>
+    </aside>
+
+    <form id="application">
+      <div class="form-heading">
+        <p class="eyebrow">Talent application</p>
+        <h2>Let’s meet you.</h2>
+        <p>Fields marked “required” must be completed.</p>
+        <p class="hint">
+          Your entries and selected files stay in this browser tab.
+          Download your profile before closing or refreshing.
+          This page does not send an application.
+        </p>
+      </div>
+
+      <noscript>
+        <p class="message error">
+          Enable JavaScript for media validation and PDF download.
+        </p>
+      </noscript>
+
+      <fieldset id="form-fields" class="form-fields">
+        <legend class="sr-only">Application questionnaire</legend>
+
+        <section id="personal" class="section">
+          <h2><span>01</span> Personal information</h2>
+
+          <div class="grid">
+            <div class="question full" data-question="1. Full legal name">
+              <label for="full-name">
+                1. Full legal name <small>required</small>
+              </label>
+              <input id="full-name" name="fullName"
+                     autocomplete="name" maxlength="160" required>
+            </div>
+
+            <div class="question" data-question="2. Date of birth">
+              <label for="dob">
+                2. Date of birth <small>required</small>
+              </label>
+              <input id="dob" name="dob" type="date"
+                     autocomplete="bday" required>
+            </div>
+
+            <div class="question" data-question="3. Country of residence">
+              <label for="country">
+                3. Country of residence <small>required</small>
+              </label>
+              <input id="country" name="country"
+                     autocomplete="country-name" maxlength="100" required>
+            </div>
+
+            <div class="question" data-question="3. City of residence">
+              <label for="city">
+                City of residence <small>required</small>
+              </label>
+              <input id="city" name="city"
+                     autocomplete="address-level2" maxlength="100" required>
+            </div>
+
+            <div class="question" data-question="4. Time zone">
+              <label for="timezone">
+                4. Time zone <small>required</small>
+              </label>
+              <input id="timezone" name="timezone" list="timezones"
+                     placeholder="Asia/Kolkata or UTC+05:30"
+                     maxlength="100" required>
+              <datalist id="timezones"></datalist>
+            </div>
+
+            <div class="question" data-question="5. Preferred contact method">
+              <label for="contact-method">
+                5. Preferred contact method <small>required</small>
+              </label>
+              <select id="contact-method" name="contactMethod" required>
+                <option value="">Select a method</option>
+                <option>Email</option>
+                <option>Phone</option>
+                <option>WhatsApp</option>
+              </select>
+            </div>
+
+            <div class="question" data-question="Contact details">
+              <label id="contact-label" for="contact">
+                Email address <small>required</small>
+              </label>
+              <input id="contact" name="contact" type="email"
+                     autocomplete="email" maxlength="180" required>
+            </div>
+          </div>
+        </section>
+
+        <section id="experience" class="section">
+          <h2><span>02</span> Modeling experience</h2>
+
+          <div class="grid">
+            <div class="question full"
+                 data-question="6. Previous modeling experience">
+              <label for="experience-text">
+                6. Do you have previous modeling experience?
+                <small>required</small>
+              </label>
+              <textarea id="experience-text" name="experience"
+                        rows="4" maxlength="6000"
+                        placeholder="Describe your experience, or write “No previous experience”."
+                        required></textarea>
+            </div>
+
+            <div class="question full"
+                 data-question="7. Portfolio or comp card URL">
+              <label for="portfolio">
+                7. Portfolio or comp card link <small>optional</small>
+              </label>
+              <input id="portfolio" name="portfolio" type="url"
+                     placeholder="https://" maxlength="1000">
+            </div>
+
+            <fieldset class="question full"
+                      data-question="8. Comfortable on camera with remote direction">
+              <legend>
+                8. Are you comfortable working alone on camera with remote direction?
+                <small>required</small>
+              </legend>
+              <div class="choices">
+                <label>
+                  <input type="radio" name="cameraComfort"
+                         value="Yes" required> Yes
+                </label>
+                <label>
+                  <input type="radio" name="cameraComfort" value="No"> No
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="question full" data-question="9. Modeling interests">
+              <label for="interests">
+                9. What types of modeling interest you?
+                <small>required</small>
+              </label>
+              <textarea id="interests" name="interests"
+                        rows="2" maxlength="2000"
+                        placeholder="Fashion, commercial, fitness, product, or other interests"
+                        required></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section id="technical" class="section">
+          <h2><span>03</span> Technical setup</h2>
+
+          <div class="grid">
+            <div class="question full"
+                 data-question="10. Available shoot devices">
+              <label for="devices">
+                10. What devices do you have for shoots?
+                <small>required</small>
+              </label>
+              <input id="devices" name="devices"
+                     placeholder="Phone, DSLR, mirrorless camera, webcam. Include models."
+                     maxlength="500" required>
+            </div>
+
+            <div class="question full"
+                 data-question="11. Main camera resolution">
+              <label for="resolution">
+                11. Main camera or phone resolution
+                <small>required</small>
+              </label>
+              <input id="resolution" name="resolution"
+                     placeholder="For example: 48 MP photos, 4K video, or unsure"
+                     maxlength="200" required>
+            </div>
+
+            <fieldset class="question full"
+                      data-question="12. Reliable high-speed internet">
+              <legend>
+                12. Do you have reliable high-speed internet?
+                <small>required</small>
+              </legend>
+              <div class="choices">
+                <label>
+                  <input type="radio" name="internet"
+                         value="Yes" required> Yes
+                </label>
+                <label>
+                  <input type="radio" name="internet" value="No"> No
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="question full"
+                 data-question="13. Lighting and available space">
+              <label for="lighting">
+                13. Describe your space, natural light, or lighting equipment.
+                <small>required</small>
+              </label>
+              <textarea id="lighting" name="lighting"
+                        rows="3" maxlength="3000" required></textarea>
+            </div>
+
+            <fieldset class="question full"
+                      data-question="14. Clean, neutral backdrop available">
+              <legend>
+                14. Are you able to set up a clean, neutral backdrop?
+                <small>required</small>
+              </legend>
+              <div class="choices">
+                <label>
+                  <input type="radio" name="backdrop"
+                         value="Yes" required> Yes
+                </label>
+                <label>
+                  <input type="radio" name="backdrop" value="No"> No
+                </label>
+              </div>
+            </fieldset>
+          </div>
+        </section>
+
+        <section id="availability" class="section">
+          <h2><span>04</span> Availability</h2>
+
+          <div class="grid">
+            <div class="question"
+                 data-question="15. Available hours per week">
+              <label for="hours">
+                15. Hours available per week <small>required</small>
+              </label>
+              <input id="hours" name="hours" type="number"
+                     min="0.5" max="168" step="0.5" required>
+            </div>
+
+            <div class="question full"
+                 data-question="16. Preferred days and session times">
+              <label for="sessions">
+                16. What days and times work best? <small>required</small>
+              </label>
+              <textarea id="sessions" name="sessions"
+                        rows="3" maxlength="3000"
+                        placeholder="For example: Monday to Friday, 6–9 pm in the time zone above."
+                        required></textarea>
+            </div>
+
+            <div class="question full"
+                 data-question="17. Earliest start date">
+              <label for="start-date">
+                17. Earliest start date <small>required</small>
+              </label>
+              <input id="start-date" name="startDate" type="date" required>
+            </div>
+          </div>
+        </section>
+
+        <section id="professional" class="section">
+          <h2><span>05</span> Payment &amp; professional details</h2>
+
+          <div class="grid">
+            <div class="question full"
+                 data-question="18. Rate expectations">
+              <label for="rates">
+                18. Your expected rate, or would you like to hear ours first?
+                <small>required</small>
+              </label>
+              <textarea id="rates" name="rates"
+                        rows="2" maxlength="2000"
+                        placeholder="Include your currency and hourly or per-shoot rate, or write “Share your rates first”."
+                        required></textarea>
+            </div>
+
+            <div class="question full"
+                 data-question="19. Preferred payment method">
+              <label for="payment">
+                19. Preferred payment method <small>required</small>
+              </label>
+              <select id="payment" name="payment" required>
+                <option value="">Select a method</option>
+                <option>PayPal</option>
+                <option>Bank transfer</option>
+                <option>Wise</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div id="other-payment-field" class="question full"
+                 data-question="19. Other payment method" hidden>
+              <label for="other-payment">
+                Specify your payment method <small>required</small>
+              </label>
+              <input id="other-payment" name="otherPayment"
+                     maxlength="150" disabled>
+            </div>
+
+            <div class="question full"
+                 data-question="20. Work eligibility and tax requirements">
+              <label for="eligibility">
+                20. Do you have the right to work in your country?
+                Any tax requirements? <small>required</small>
+              </label>
+              <textarea id="eligibility" name="eligibility"
+                        rows="3" maxlength="3000"
+                        placeholder="Describe work eligibility and applicable requirements. Do not enter tax ID numbers or bank account details."
+                        required></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section id="media" class="section">
+          <h2><span>06</span> Pre-training verification</h2>
+
+          <p class="hint" id="media-limits">
+            Up to 50 photos across both photo fields.
+            All photos and the video together: 50 MB maximum.
+            Select files again to add more photos.
+          </p>
+
+          <div class="media-meter">
+            <span id="media-summary" role="status">
+              0 / 50 photos · 0.00 / 50 MB
+            </span>
+            <progress id="media-progress" max="50000000" value="0"
+                      aria-label="Combined media file size"></progress>
+          </div>
+
+          <p id="upload-error" class="message error"
+             role="alert" hidden></p>
+          <p id="upload-status" class="hint" role="status"></p>
+
+          <div class="upload-box">
+            <label for="room-video">
+              21. Room and lighting video <small>required</small>
+            </label>
+            <p class="hint" id="video-hint">
+              Add one video showing your room, windows, lights, and shoot area.
+              MP4, WebM, or MOV. Selecting another video replaces the current one.
+            </p>
+            <input id="room-video" type="file"
+                   accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+                   aria-describedby="video-hint media-limits upload-error"
+                   data-upload="video">
+            <div id="video-preview" class="previews"></div>
+          </div>
+
+          <div class="upload-box">
+            <label for="room-photos">
+              Room photos from different angles <small>required</small>
+            </label>
+            <p id="room-hint" class="hint">
+              Show the available light from different viewpoints.
+              JPEG and PNG only.
+            </p>
+            <input id="room-photos" type="file"
+                   accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple
+                   aria-describedby="room-hint media-limits upload-error"
+                   data-upload="room">
+            <div id="room-preview" class="previews"></div>
+          </div>
+
+          <div class="question acknowledgement"
+               data-question="22. Google Chat acknowledgement">
+            <label for="google-chat">
+              <input id="google-chat" name="googleChat"
+                     type="checkbox" value="Confirmed" required>
+              <span>
+                22. I have installed Google Chat on my phone to share photos/videos during the process.
+                <small>required</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="upload-box">
+            <label for="body-photos">
+              23. Your 10 most recent full-body pictures
+              <small>required</small>
+            </label>
+            <p id="body-hint" class="hint">
+              Add at least 10 photos in different outfits and poses,
+              with your full body visible. JPEG and PNG only.
+            </p>
+            <input id="body-photos" type="file"
+                   accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple
+                   aria-describedby="body-hint media-limits upload-error"
+                   data-upload="body">
+            <div id="body-preview" class="previews"></div>
+          </div>
+        </section>
+      </fieldset>
+
+      <footer class="form-footer">
+        <h2>Ready for your close-up?</h2>
+        <p>
+          Your PDF includes your answers, photo thumbnails, and video filename.
+          Share the original video separately.
+        </p>
+        <button id="download" type="submit" disabled>
+          Generate &amp; Download Profile as PDF
+        </button>
+        <p id="export-status" class="message"
+           role="status" aria-live="polite" hidden></p>
+      </footer>
+    </form>
+  </main>
+</body>
+</html>
