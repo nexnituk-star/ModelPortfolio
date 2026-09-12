@@ -35,7 +35,10 @@
 
       <div class="intro-note">
         Your profile, ready to share.<br>
-        <small>Download a PDF after completing all six sections.</small>
+        <small>
+          Download a PDF after completing all six sections.<br>
+          Questions or help: <a href="mailto:nexnituk@gmail.com">nexnituk@gmail.com</a>
+        </small>
       </div>
     </aside>
 
@@ -46,8 +49,20 @@
         <p>Fields marked “required” must be completed.</p>
         <p class="hint">
           Your entries and selected files stay in this browser tab.
-          Download your profile before closing or refreshing.
-          This page does not send an application.
+          Save your progress before closing or refreshing.
+          You can submit your answers by email when finished.
+        </p>
+        <div class="section-progress" aria-live="polite">
+          <span id="progress-label">Section 1 of 6: Personal information</span>
+          <progress id="section-progress" max="6" value="1"
+                    aria-label="Application progress"></progress>
+        </div>
+        <div class="form-tools">
+          <button id="save-progress" type="button">Save progress</button>
+          <button id="clear-progress" type="button">Clear saved progress</button>
+        </div>
+        <p class="privacy-note">
+          Privacy: answers stay in this browser until you submit them by email or clear them.
         </p>
       </div>
 
@@ -348,7 +363,7 @@
           <p class="hint" id="media-limits">
             Up to 50 photos across both photo fields.
             Photos are limited to 50 MB total.
-            Select files again to add more photos.
+              Select files again to add more photos. Files are used only to create your PDF preview.
           </p>
 
           <div class="media-meter">
@@ -429,7 +444,14 @@
           Your PDF includes your answers, five photo previews per page, and the
           Google Drive video link.
         </p>
-        <button id="download" type="submit" disabled>
+        <p class="contact-help">
+          Questions or help? <a href="mailto:nexnituk@gmail.com">Email nexnituk@gmail.com</a>
+        </p>
+        <p id="review-status" class="message" role="status" hidden></p>
+        <button id="submit-email" type="button">
+          Submit application by email
+        </button>
+        <button id="download" type="submit">
           Generate &amp; Download Profile as PDF
         </button>
         <p id="export-status" class="message"
@@ -437,5 +459,7 @@
       </footer>
     </form>
   </main>
+
+  <a class="back-to-top" href="#application">Back to top</a>
 </body>
 </html>

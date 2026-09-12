@@ -3,6 +3,8 @@
 const $ = (selector) => document.querySelector(selector);
 const form = $("#application");
 const downloadButton = $("#download");
+const submitEmailButton = $("#submit-email");
+const STORAGE_KEY = "frame-talent-application";
 
 const media = {
   room: [],
@@ -13,6 +15,7 @@ const MAX_PHOTOS = 50;
 const MAX_BYTES = 50 * 1000 * 1000;
 
 let busy = false;
+let restoring = false;
 
 const allMedia = () => [...media.room, ...media.body];
 const sizeMB = (bytes) => (bytes / 1000000).toFixed(2);
@@ -45,6 +48,58 @@ function setBusy(value, exporting = false) {
       node.disabled = value;
     });
 }
+
+  function saveFormProgress() {
+    if (restoring) return;
+
+    const values = [...form.querySelectorAll("input, select, textarea")]
+      .filter((control) => control.type !== "file")
+      .map((control) => ({
+        id: control.id,
+        name: control.name,
+        type: control.type,
+        value: control.value,
+        checked: control.checked
+      }));
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+  }
+
+  function restoreFormProgress() {
+    let values;
+
+    try {
+      values = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch {
+      values = [];
+    }
+
+    if (!Array.isArray(values) || !values.length) return;
+
+    restoring = true;
+    for (const saved of values) {
+      const controls = saved.id
+        ? [document.getElementById(saved.id)]
+        : [...form.querySelectorAll("[name]")].filter(
+            (control) => control.name === saved.name && control.type === saved.type
+          );
+
+      for (const control of controls.filter(Boolean)) {
+        if (control.type === "radio" && control.value !== saved.value) continue;
+
+        if (control.type === "radio" || control.type === "checkbox") {
+          control.checked = saved.checked;
+        } else {
+          control.value = saved.value;
+        }
+      }
+    }
+    restoring = false;
+
+    $("#contact-method").dispatchEvent(new Event("change"));
+    $("#payment").dispatchEvent(new Event("change"));
+    message("#export-status", "Saved progress restored from this browser.");
+  }
 
 function localDate() {
   const now = new Date();
@@ -124,15 +179,18 @@ function validateText(input) {
 
 form.addEventListener("input", (event) => {
   validateText(event.target);
+  saveFormProgress();
   message("#export-status", "");
 });
+
+form.addEventListener("change", saveFormProgress);
 
 form.addEventListener(
   "invalid",
   () => {
     message(
       "#export-status",
-      "Complete all required fields before downloading your PDF.",
+      "Please complete the required fields before continuing.",
       true
     );
   },
@@ -347,6 +405,36 @@ document.querySelectorAll("[data-upload]").forEach((input) => {
   });
 });
 
+$("#save-progress").addEventListener("click", () => {
+  saveFormProgress();
+  message("#export-status", "Your progress is saved in this browser.");
+});
+
+$("#clear-progress").addEventListener("click", () => {
+  if (!window.confirm("Clear all saved answers from this browser?")) return;
+
+  localStorage.removeItem(STORAGE_KEY);
+  window.location.reload();
+});
+
+function updateProgress() {
+  const sections = [...document.querySelectorAll(".section")];
+  let current = 1;
+
+  sections.forEach((section, index) => {
+    if (section.getBoundingClientRect().top <= 180) current = index + 1;
+  });
+
+  const section = sections[current - 1];
+  $("#section-progress").value = current;
+  $("#progress-label").textContent =
+    `Section ${current} of ${sections.length}: ${section.querySelector("h2").textContent.replace(/^\d+\s*/, "")}`;
+}
+
+window.addEventListener("scroll", updateProgress, { passive: true });
+updateProgress();
+restoreFormProgress();
+
 function validateMedia() {
   let error = "";
   let target = "#room-video";
@@ -374,6 +462,53 @@ function validateMedia() {
 
   return !error;
 }
+
+submitEmailButton.addEventListener("click", () => {
+  form.querySelectorAll("input, textarea").forEach(validateText);
+
+  if (!form.reportValidity()) {
+    message(
+      "#review-status",
+      "Please complete the required fields before submitting.",
+      true
+    );
+    return;
+  }
+
+  if (!validateMedia()) return;
+
+  const answers = document.querySelectorAll(".section");
+  const lines = [
+    "Hello FRAME / TALENT,",
+    "",
+    "Please find my remote modeling application below.",
+    ""
+  ];
+
+  for (const section of answers) {
+    for (const [label, value] of getAnswers(section)) {
+      lines.push(`${label}: ${value}`);
+    }
+  }
+
+  lines.push(
+    "",
+    `Room and lighting video: ${$("#room-video").value.trim()}`,
+    `Room photos selected: ${media.room.map((item) => item.file.name).join(", ") || "None"}`,
+    `Full-body photos selected: ${media.body.map((item) => item.file.name).join(", ") || "None"}`,
+    "",
+    "Photo files are not attached automatically. I will attach them separately if needed."
+  );
+
+  const subject = `Remote modeling application - ${$("#full-name").value.trim()}`;
+  const mailto = `mailto:nexnituk@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+
+  message(
+    "#review-status",
+    "Opening your email app. Please review the message and attach photos before sending."
+  );
+  window.location.href = mailto;
+});
 
 function getAnswers(section) {
   return [...section.querySelectorAll("[data-question]")]
