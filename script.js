@@ -128,6 +128,18 @@ form.addEventListener("input", (event) => {
   message("#export-status", "");
 });
 
+form.addEventListener(
+  "invalid",
+  () => {
+    message(
+      "#export-status",
+      "Complete all required fields before downloading your PDF.",
+      true
+    );
+  },
+  true
+);
+
 async function makeThumbnail(file) {
   const bytes = new Uint8Array(await file.slice(0, 8).arrayBuffer());
 
